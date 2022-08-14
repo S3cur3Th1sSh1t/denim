@@ -38,14 +38,14 @@ type Build struct {
 }
 
 // Compile a nim program with Obfuscator-LLVM
-func Compile(build *Build, obfArgs *ollvm.ObfArgs) error {
+func Compile(build *Build, obfArgs *ollvm.ObfArgs, compileArgs string) error {
 	clang, err := ollvm.InitClang(assets.GetClangDir())
 	if err != nil {
 		return err
 	}
 
 	// Compile Nim
-	nimCache, err := compileNimCode(build, clang)
+	nimCache, err := compileNimCode(build, clang, compileArgs)
 	if err != nil {
 		return err
 	}
@@ -113,7 +113,7 @@ func Compile(build *Build, obfArgs *ollvm.ObfArgs) error {
 }
 
 // nim compile --genScript --compileOnly --cc=clang --clang.exe:PATH --nimcache:PATH helloworld.nim
-func compileNimCode(build *Build, clang *ollvm.Clang) (string, error) {
+func compileNimCode(build *Build, clang *ollvm.Clang, compileArgs string) (string, error) {
 	nimCache := filepath.Join(assets.GetNimCacheRoot(), build.Name)
 	if _, err := os.Stat(nimCache); !os.IsNotExist(err) {
 		err := os.RemoveAll(nimCache)
@@ -122,13 +122,16 @@ func compileNimCode(build *Build, clang *ollvm.Clang) (string, error) {
 		}
 	}
 	args := []string{"--genScript", "--compileOnly", "--cc:clang"}
+	args = append(args, compileArgs)
 	args = append(args, fmt.Sprintf("--clang.exe=%s", clang.ClangExe))
 	args = append(args, fmt.Sprintf("--nimcache:%s", nimCache))
 	if build.Output != "" {
 		args = append(args, fmt.Sprintf("--out:%s", build.Output))
 	}
 	args = append(args, build.NimFiles...)
-
+     
+    fmt.Printf("## Compile args: \n")
+    fmt.Println(args)
 	workDir, _ := os.Getwd()
 	stdout, stderr, err := nim.Compile(workDir, os.Environ(), args)
 	if build.Verbose {
