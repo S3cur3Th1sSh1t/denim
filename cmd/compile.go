@@ -34,6 +34,7 @@ var compileCmd = &cobra.Command{
 		if !preflight() {
 			return
 		}
+		fmt.Printf("## @ShitSecure modified version for the Packer \n")
 		if len(args) < 1 {
 			fmt.Printf(Warn + "Missing input files\n")
 			return
@@ -66,8 +67,8 @@ var compileCmd = &cobra.Command{
 		if err != nil {
 			return
 		}
-
-		err = build.Compile(buildArgs, obfArgs)
+		aArgs, err := cmd.Flags().GetString(additionalNimCompilerArgs)
+		err = build.Compile(buildArgs, obfArgs, aArgs)
 		if err != nil {
 			fmt.Printf(Warn+"%s", err)
 		}
