@@ -122,7 +122,8 @@ func compileNimCode(build *Build, clang *ollvm.Clang, compileArgs string) (strin
 		}
 	}
 	args := []string{"--genScript", "--compileOnly", "--cc:clang"}
-	args = append(args, compileArgs)
+	var toArray = strings.Split(compileArgs, " ")
+	args = append(args, toArray...)
 	args = append(args, fmt.Sprintf("--clang.exe=%s", clang.ClangExe))
 	args = append(args, fmt.Sprintf("--nimcache:%s", nimCache))
 	if build.Output != "" {
