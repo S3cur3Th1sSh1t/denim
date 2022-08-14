@@ -65,6 +65,7 @@ const (
 	flattenFlagStr  = "flatten"
 	flattenSplitStr = "flatten-split"
 	seedFlagStr     = "seed"
+	additionalNimCompilerArgs = "compileArgs"
 )
 
 var rootCmd = &cobra.Command{
@@ -96,11 +97,12 @@ func init() {
 	compileCmd.Flags().BoolP(flattenFlagStr, "f", true, "Enable control flow flattening")
 	compileCmd.Flags().IntP(flattenSplitStr, "L", 0, "Splits applied to each block (0 = random)")
 	compileCmd.Flags().StringP(seedFlagStr, "r", "", "PRNG obfuscation seed (default is random)")
+	compileCmd.Flags().StringP(additionalNimCompilerArgs, "A", "", "Additional Nim Compiler arguments")
 
 	// Compile - Standard options
 	compileCmd.Flags().StringP(outputFlagStr, "o", "", "output file")
 	compileCmd.Flags().BoolP(allCodeFlagStr, "a", false, "obfuscate all code including nim stdlib")
-	compileCmd.Flags().BoolP(verboseFlagStr, "v", false, "display verbose information")
+	compileCmd.Flags().BoolP(verboseFlagStr, "v", true, "display verbose information")
 	rootCmd.AddCommand(compileCmd)
 
 }
